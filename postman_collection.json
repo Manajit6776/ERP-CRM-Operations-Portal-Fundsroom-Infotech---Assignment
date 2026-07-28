@@ -1,0 +1,237 @@
+{
+  "info": {
+    "_postman_id": "c1f2e3d4-b5a6-4c7d-8e9f-0a1b2c3d4e5f",
+    "name": "Mini ERP + CRM Operations Portal API Collection",
+    "description": "Complete REST API suite for Mini ERP + CRM Portal featuring JWT Auth, CRM Customers, Products Inventory, Stock Movements Audit Trail, and Transactional Sales Challans.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@fundsroom.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Login (Sales)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sales@fundsroom.com\",\n  \"password\": \"Sales@123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Customer CRM",
+      "item": [
+        {
+          "name": "List Customers (Paginated & Filtered)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/customers?page=1&limit=10&status=Active&type=Wholesale",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "Active" },
+                { "key": "type", "value": "Wholesale" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Customer By ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/customers/1", "host": ["{{baseUrl}}"], "path": ["customers", "1"] }
+          }
+        },
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vikramaditya Shah\",\n  \"mobile\": \"+91 9820011223\",\n  \"email\": \"vikram@shahindustries.com\",\n  \"business_name\": \"Shah Heavy Industries\",\n  \"gst_number\": \"27AAAAA9999A1Z1\",\n  \"customer_type\": \"Wholesale\",\n  \"address\": \"Plot 44, GIDC Industrial Estate, Surat, GJ\",\n  \"status\": \"Lead\",\n  \"follow_up_date\": \"2026-08-15\",\n  \"notes\": \"Initial inquiry for office equipment batch order.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customers", "host": ["{{baseUrl}}"], "path": ["customers"] }
+          }
+        },
+        {
+          "name": "Add Customer Follow-up Note",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"note\": \"Discussed revised payment terms (NET 30). Sent contract draft for review.\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/customers/1/followups", "host": ["{{baseUrl}}"], "path": ["customers", "1", "followups"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Products & Inventory",
+      "item": [
+        {
+          "name": "List Products (With Low Stock Alert Filter)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/products?page=1&limit=10&lowStock=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "lowStock", "value": "true" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"4K Ultra HD Conference Camera\",\n  \"sku\": \"PROD-CAM-99\",\n  \"category\": \"Electronics\",\n  \"unit_price\": 34999.00,\n  \"current_stock\": 15,\n  \"min_stock_alert\": 4,\n  \"location\": \"Warehouse A - Shelf 3\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] }
+          }
+        },
+        {
+          "name": "Manual Stock Adjustment (+ Audit Log)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity_changed\": 10,\n  \"reason\": \"Supplier restock delivery batch #PO-8821\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/products/1/stock-movements", "host": ["{{baseUrl}}"], "path": ["products", "1", "stock-movements"] }
+          }
+        },
+        {
+          "name": "Get Product Stock Movement History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/products/1/stock-movements?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["products", "1", "stock-movements"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Sales Challans (Core Business Logic)",
+      "item": [
+        {
+          "name": "List Sales Challans",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/challans?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["challans"] }
+          }
+        },
+        {
+          "name": "Create Draft Sales Challan",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": 1,\n  \"notes\": \"Express shipping required.\",\n  \"items\": [\n    {\n      \"product_id\": 1,\n      \"quantity\": 2\n    },\n    {\n      \"product_id\": 4,\n      \"quantity\": 5\n    }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/challans", "host": ["{{baseUrl}}"], "path": ["challans"] }
+          }
+        },
+        {
+          "name": "Confirm Sales Challan (Transactional Stock Lock)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/challans/1/confirm", "host": ["{{baseUrl}}"], "path": ["challans", "1", "confirm"] }
+          }
+        },
+        {
+          "name": "Cancel Sales Challan (Restock Inventory)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/challans/1/cancel", "host": ["{{baseUrl}}"], "path": ["challans", "1", "cancel"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Dashboard Telemetry",
+      "item": [
+        {
+          "name": "Get Executive Dashboard Summary",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/dashboard/summary", "host": ["{{baseUrl}}"], "path": ["dashboard", "summary"] }
+          }
+        }
+      ]
+    }
+  ]
+}
