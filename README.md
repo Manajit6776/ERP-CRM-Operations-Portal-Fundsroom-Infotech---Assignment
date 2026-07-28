@@ -8,7 +8,7 @@ graph TD
     API["Express.js + TypeScript REST API<br/>[Render Host]"]
     Auth["JWT + bcrypt RBAC Middleware"]
     DB[("MySQL Database<br/>[XAMPP Local / Aiven Cloud]")]
-    
+     
     Client -->|HTTPS / JSON API| API
     API -->|Bearer Token Verification| Auth
     API -->|ACID DB Transactions & Locking| DB
