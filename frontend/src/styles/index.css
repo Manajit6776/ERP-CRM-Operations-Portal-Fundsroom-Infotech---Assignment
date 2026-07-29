@@ -417,9 +417,11 @@ body {
     align-items: center;
     justify-content: center;
   }
+  
 
   .content-area {
     padding: 10px;
+    margin-bottom: 80px;
   }
 
   .grid-metrics {
