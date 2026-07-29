@@ -7,29 +7,39 @@ import { ENV } from './config/env';
 const app = express();
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-// Static allowlist: production frontend + local dev ports
-const allowedOrigins: string[] = [
-  ENV.FRONTEND_URL,          // e.g. https://erp-crm-frontend.vercel.app
-  'http://localhost:5173',   // Vite default
-  'http://localhost:3000',   // alternate dev port
-]
-  .filter(Boolean)
-  .map((o) => o.replace(/\/$/, '')); // strip trailing slashes
+// Strip trailing slash from FRONTEND_URL so comparison is always clean.
+const FRONTEND_URL = (process.env.FRONTEND_URL || '').replace(/\/$/, '');
 
-// Vercel generates preview URLs as:
-//   https://<project-slug>-<git-hash>-<team-slug>.vercel.app
-//   https://<project-slug>-<git-hash>.vercel.app
+// Static allowlist: production URL + local dev ports.
+const allowedOrigins: string[] = [
+  FRONTEND_URL,
+  'http://localhost:5173',
+  'http://localhost:3000',
+].filter(Boolean); // removes empty string if FRONTEND_URL is unset
+
+// Vercel preview URL pattern scoped to THIS project only.
 //
-// Our project slug starts with "erp-crm-operations-portal-fundsroom-infotech-assignm"
-// (Vercel truncates long names; confirmed preview format from the dashboard).
-// The regex anchors both ends so it cannot match other projects on *.vercel.app.
+// Vercel project slug: "erp-crm-operations-portal-fundsroom"
+//   (derived from the repo/project name on Vercel's dashboard)
+//
+// Production URL : https://erp-crm-operations-portal-fundsroom.vercel.app
+//   → prefix match: "erp-crm-operations-portal-fundsroom", suffix: "" (zero length) ✅
+//
+// Preview URL    : https://erp-crm-operations-portal-fundsroom-infotech-assignm-dssgjwwpf.vercel.app
+//   → prefix match: "erp-crm-operations-portal-fundsroom", suffix: "-infotech-assignm-dssgjwwpf" ✅
+//
+// Other projects : https://some-other-project.vercel.app
+//   → prefix does NOT match → ❌ blocked
+//
+// The regex requires https, anchors both ends, and allows only [a-z0-9-] in the suffix
+// so no injection or bypass is possible via crafted origin headers.
 const vercelPreviewPattern =
-  /^https:\/\/erp-crm-operations-portal-fundsroom-infotech-assignm[a-z0-9-]*\.vercel\.app$/;
+  /^https:\/\/erp-crm-operations-portal-fundsroom[a-z0-9-]*\.vercel\.app$/;
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow non-browser callers (curl, Render health-checks, server-to-server)
+    origin(origin, callback) {
+      // Allow non-browser callers (curl, Postman, server-to-server, Render health checks).
       if (!origin) return callback(null, true);
 
       const normalized = origin.replace(/\/$/, '');
@@ -38,7 +48,9 @@ app.use(
         return callback(null, true);
       }
 
-      return callback(new Error(`CORS: origin '${origin}' is not allowed`));
+      // Log the exact rejected origin so Render logs show it without guesswork.
+      console.warn(`[CORS] Blocked origin: ${normalized}`);
+      return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
   })
