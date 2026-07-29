@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 
 export async function seedDatabase(connection: any) {
-  console.log('🌱 Starting database seeding...');
+  console.log('Starting database seeding...');
 
   // 1. Seed Users
   const passwordAdmin = await bcrypt.hash('Admin@123', 10);
@@ -24,7 +24,7 @@ export async function seedDatabase(connection: any) {
       user
     );
   }
-  console.log('✅ Seeded 4 default users (Admin, Sales, Warehouse, Accounts).');
+  console.log('Seeded 4 default users (Admin, Sales, Warehouse, Accounts).');
 
   // Fetch admin user ID for referencing in seeds
   const [adminUserRows]: any = await connection.query(`SELECT id, name FROM users WHERE email = ?`, ['admin@fundsroom.com']);
@@ -90,7 +90,7 @@ export async function seedDatabase(connection: any) {
       cust
     );
   }
-  console.log('✅ Seeded 4 sample customers.');
+  console.log('Seeded 4 sample customers.');
 
   // Seed Customer Followup Note
   const [custRows]: any = await connection.query(`SELECT id FROM customers LIMIT 1`);
@@ -121,7 +121,7 @@ export async function seedDatabase(connection: any) {
       prod
     );
   }
-  console.log('✅ Seeded 6 sample products (including low-stock alert items).');
+  console.log('Seeded 6 sample products (including low-stock alert items).');
 
   // 4. Seed Stock Movements Audit Trail
   const [prodList]: any = await connection.query(`SELECT id, name, current_stock FROM products`);
@@ -132,7 +132,7 @@ export async function seedDatabase(connection: any) {
       [p.id, p.current_stock, adminUser.id, adminUser.name]
     );
   }
-  console.log('✅ Seeded initial stock movement audit logs.');
+  console.log('Seeded initial stock movement audit logs.');
 
   // 5. Seed Draft Sales Challan
   const [apexCustomer]: any = await connection.query(`SELECT id, business_name FROM customers WHERE email = ?`, ['rajesh@apextech.com']);
@@ -166,8 +166,8 @@ export async function seedDatabase(connection: any) {
         challanId, item2.id, 'Mechanical Wireless Keyboard', price2, qty2, qty2 * price2
       ]
     );
-    console.log('✅ Seeded sample Draft Sales Challan CH-2026-0001 with product snapshots.');
+    console.log('Seeded sample Draft Sales Challan CH-2026-0001 with product snapshots.');
   }
 
-  console.log('🎉 Seeding complete successfully!');
+  console.log('Seeding complete successfully!');
 }

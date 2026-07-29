@@ -104,28 +104,28 @@ export const LoginPage = () => {
               style={{ fontSize: '0.75rem', padding: '6px' }}
               onClick={() => handleQuickLogin('admin@fundsroom.com', 'Admin@123')}
             >
-              👑 Admin
+              Admin
             </button>
             <button
               className="btn btn-secondary"
               style={{ fontSize: '0.75rem', padding: '6px' }}
               onClick={() => handleQuickLogin('sales@fundsroom.com', 'Sales@123')}
             >
-              💼 Sales
+              Sales
             </button>
             <button
               className="btn btn-secondary"
               style={{ fontSize: '0.75rem', padding: '6px' }}
               onClick={() => handleQuickLogin('warehouse@fundsroom.com', 'Warehouse@123')}
             >
-              🏭 Warehouse
+              Warehouse
             </button>
             <button
               className="btn btn-secondary"
               style={{ fontSize: '0.75rem', padding: '6px' }}
               onClick={() => handleQuickLogin('accounts@fundsroom.com', 'Accounts@123')}
             >
-              📊 Accounts
+              Accounts
             </button>
           </div>
         </div>

@@ -13,5 +13,6 @@ export const ENV = {
   DB_USER: process.env.DB_USER || 'root',
   DB_PASSWORD: process.env.DB_PASSWORD || '',
   DB_NAME: process.env.DB_NAME || 'mini_erp_crm',
-  DATABASE_URL: process.env.DATABASE_URL
+  DATABASE_URL: process.env.DATABASE_URL,
+  DB_CA_CERT: process.env.DB_CA_CERT
 };

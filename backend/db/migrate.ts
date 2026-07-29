@@ -7,7 +7,7 @@ import { seedDatabase } from './seed';
 dotenv.config();
 
 async function migrate() {
-  console.log('🚀 Connecting to MySQL server for migrations...');
+  console.log('Connecting to MySQL server for migrations...');
 
   const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
@@ -25,23 +25,23 @@ async function migrate() {
     connection = await mysql.createConnection(dbConfig);
     await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
     await connection.query(`USE \`${dbName}\`;`);
-    console.log(`✅ Connected & selected database: "${dbName}"`);
+    console.log(`Connected & selected database: "${dbName}"`);
 
     // 2. Read and run schema.sql
     const schemaPath = path.join(__dirname, 'schema.sql');
     const sql = fs.readFileSync(schemaPath, 'utf8');
 
-    console.log('📄 Executing database schema migrations...');
+    console.log('Executing database schema migrations...');
     await connection.query(sql);
-    console.log('✅ Schema migration executed successfully.');
+    console.log('Schema migration executed successfully.');
 
     // 3. Seed data
     await seedDatabase(connection);
 
-    console.log('✨ All migrations and seeding completed successfully!');
+    console.log('All migrations and seeding completed successfully!');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Migration failed:', error);
+    console.error('Migration failed:', error);
     process.exit(1);
   } finally {
     if (connection) {
