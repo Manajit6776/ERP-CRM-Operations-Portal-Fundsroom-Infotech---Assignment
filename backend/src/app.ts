@@ -6,18 +6,23 @@ import { ENV } from './config/env';
 
 const app = express();
 
-// Middlewares
+// CORS — strip trailing slash so both https://x.vercel.app and https://x.vercel.app/ work
+const allowedOrigin = (ENV.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
 app.use(cors({
-  origin: true, // Allow frontend origin or configure from env
+  origin: allowedOrigin,
   credentials: true
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health Check
-app.get('/health', (_req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString(), service: 'Mini ERP + CRM Operations Portal API' });
+// Health checks — /health (legacy) and /api/health (canonical, use this to verify deploys)
+const healthPayload = () => ({
+  status: 'ok',
+  timestamp: new Date().toISOString(),
+  service: 'Mini ERP + CRM Operations Portal API'
 });
+app.get('/health', (_req, res) => { res.status(200).json(healthPayload()); });
+app.get('/api/health', (_req, res) => { res.status(200).json(healthPayload()); });
 
 // API Routes
 app.use('/api', routes);

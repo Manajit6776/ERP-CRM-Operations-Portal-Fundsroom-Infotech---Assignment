@@ -1,10 +1,19 @@
+# render.yaml — Documentation reference only.
+# This service was configured manually via the Render dashboard, not via Blueprint.
+# Do NOT rename or add this file to a Render Blueprint without reviewing all values first.
+#
+# Actual working configuration as of 2026-07-29:
+#   Build command : npm ci && npm run build
+#   Start command : npm start          (runs node dist/src/server.js)
+#   Root directory: backend/           (set in Render dashboard)
+
 services:
   - type: web
     name: mini-erp-crm-backend
     env: node
     region: singapore
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -14,8 +23,11 @@ services:
         generateValue: true
       - key: JWT_EXPIRES_IN
         value: 24h
+      # FRONTEND_URL — set to your Vercel URL, no trailing slash
+      # e.g. https://your-app.vercel.app
       - key: FRONTEND_URL
         sync: false
+      # Individual DB params (used when DATABASE_URL is not set)
       - key: DB_HOST
         sync: false
       - key: DB_PORT
@@ -25,4 +37,10 @@ services:
       - key: DB_PASSWORD
         sync: false
       - key: DB_NAME
+        sync: false
+      # Aiven cloud DB: set DATABASE_URL to override the individual params above
+      - key: DATABASE_URL
+        sync: false
+      # Aiven SSL CA certificate PEM content (required for cloud MySQL with TLS)
+      - key: DB_CA_CERT
         sync: false
